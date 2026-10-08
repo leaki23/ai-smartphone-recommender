@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Phone Recommender</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 450px;
+        }
+        h2 { text-align: center; color: #333; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #777; margin-bottom: 30px; font-size: 14px; }
+        
+        .form-group { margin-bottom: 20px; position: relative; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; font-size: 14px; }
+        .form-group i { position: absolute; left: 15px; top: 42px; color: #764ba2; z-index: 10;}
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 12px 12px 45px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 15px;
+            transition: 0.3s;
+            background: white;
+        }
+        .form-group input:focus, .form-group select:focus { border-color: #764ba2; outline: none; }
+        
+        button {
+            width: 100%; padding: 15px; background: #764ba2; color: white;
+            border: none; border-radius: 10px; font-size: 16px; font-weight: bold;
+            cursor: pointer; transition: 0.3s;
+        }
+        button:hover { background: #667eea; }
+        
+        .result-box {
+            margin-top: 25px; padding: 20px; border-radius: 15px; text-align: center; display: none;
+        }
+        .result-box i { font-size: 50px; margin-bottom: 10px; }
+        .result-box h3 { margin: 5px 0; font-size: 24px; }
+        .result-box p { margin: 0; font-size: 14px; opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2><i class="fa-solid fa-mobile-screen-button"></i> AI Phone Finder</h2>
+    <p class="subtitle">Tell us what you need, we'll find your perfect phone.</p>
+    
+    <form action="/predict" method="POST">
+        <div class="form-group">
+            <label>Your Budget ($)</label>
+            <i class="fa-solid fa-dollar-sign"></i>
+            <input type="number" name="budget" placeholder="e.g. 500" required>
+        </div>
+
+        <div class="form-group">
+            <label>Storage Capacity</label>
+            <i class="fa-solid fa-hard-drive"></i>
+            <select name="storage" required>
+                <option value="64">64 GB</option>
+                <option value="128" selected>128 GB</option>
+                <option value="256">256 GB</option>
+                <option value="512">512 GB</option>
+                <option value="1024">1 TB (1024 GB)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Operating System</label>
+            <i class="fa-brands fa-android"></i>
+            <select name="os_choice" required>
+                <option value="0">Android (Samsung)</option>
+                <option value="1">iOS (iPhone)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Camera Importance (1-10)</label>
+            <i class="fa-solid fa-camera"></i>
+            <input type="number" name="camera" min="1" max="10" placeholder="10 = Very Important" required>
+        </div>
+
+        <div class="form-group">
+            <label>Battery Importance (1-10)</label>
+            <i class="fa-solid fa-battery-full"></i>
+            <input type="number" name="battery" min="1" max="10" placeholder="10 = Very Important" required>
+        </div>
+
+        <div class="form-group">
+            <label>Gaming Importance (1-10)</label>
+            <i class="fa-solid fa-gamepad"></i>
+            <input type="number" name="gaming" min="1" max="10" placeholder="10 = Very Important" required>
+        </div>
+
+        <button type="submit"><i class="fa-solid fa-wand-magic-sparkles"></i> Find My Phone</button>
+    </form>
+    <!-- Result Display -->
+   {% if model_name %}
+   <style> .res { background-color: {{ bg }}; color: {{ color }}; border: 2px solid {{ color }}; display: block; } </style>
+   <div class="result-box res">
+       <i class="fa-brands {{ icon }}"></i>
+       <p style="margin:0; font-size:14px; text-transform:uppercase; letter-spacing:1px;">{{ brand }}</p>
+       <h3 style="margin: 5px 0;">{{ model_name }}</h3>
+       <p style="font-size: 12px; margin-top: 10px;">Best match for your budget of ${{ budget }}</p>
+   </div>
+   {% endif %}
+    
+    {% if error %}
+    <div class="result-box" style="background-color: #fadbd8; color: #c0392b; display: block;">
+        <i class="fa-solid fa-circle-xmark"></i>
+        <h3>Error</h3>
+        <p>{{ error }}</p>
+    </div>
+    {% endif %}
+</div>
+
+</body>
+</html>
